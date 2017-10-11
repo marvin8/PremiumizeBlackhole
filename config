@@ -6,6 +6,11 @@
         "nzbs": ".", 
         "torrents": "."
     }, 
+    "file_types": {
+        "magnets": ".magnet", 
+        "nzbs": ".nzb", 
+        "torrents": ".torrent"
+    }, 
     "premiumize": {
         "customer_id": "<change this to your premiumize customer_id>", 
         "pin": "<change this to your premiumize PIN>"
