@@ -42,7 +42,11 @@ for filename in glob.glob(os.path.join(config["directories"]["torrents"], config
 
 for filename in glob.glob(os.path.join(config["directories"]["magnets"], config["file_types"]["magnets"])):
   print(filename)
-# Need to add different code to upload magnet files
+  with open(filename, 'r') as magnet_file:
+    magnet_link=magnet_file.read()
+    request_pars = {"customer_id": config["premiumize"]["customer_id"], "pin": config["premiumize"]["pin"], "type": "torrent", "src": magnet_link}
+    request = requests.post("https://www.premiumize.me/api/transfer/create", data=request_pars)
+    print(request.text)
 
 for filename in glob.glob(os.path.join(config["directories"]["nzbs"], config["file_types"]["nzbs"])):
   print(filename)
