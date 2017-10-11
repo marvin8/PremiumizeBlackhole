@@ -1,0 +1,13 @@
+{
+    "directories": {
+        "complete_downloads": ".", 
+        "in_progress_hash_cache": ".", 
+        "magnets": ".", 
+        "nzbs": ".", 
+        "torrents": "."
+    }, 
+    "premiumize": {
+        "customer_id": "<change this to your premiumize customer_id>", 
+        "pin": "<change this to your premiumize PIN>"
+    }
+}
