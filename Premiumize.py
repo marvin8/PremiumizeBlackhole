@@ -33,26 +33,40 @@ except IOError:
     config = default_config
     print "Default config created. Please check values in 'config' file"
 
+id_cache = {}
+
+print('')
+print('Processing .torrent files')
 for filename in glob.glob(os.path.join(config["directories"]["torrents"], config["file_types"]["torrents"])):
-  print(filename)
   torrent = {"src": open(filename, "rb")}
   request_pars = {"customer_id": config["premiumize"]["customer_id"], "pin": config["premiumize"]["pin"], "type": "torrent"}
   request = requests.post("https://www.premiumize.me/api/transfer/create", data=request_pars, files=torrent)
-  print(request.text)
+  response=request.json()
+  id_cache[response["id"]] =  response["name"]
+  print(response["status"] + ": " + response["name"])
 
+print('')
+print('Processing .magnet files')
 for filename in glob.glob(os.path.join(config["directories"]["magnets"], config["file_types"]["magnets"])):
-  print(filename)
   with open(filename, 'r') as magnet_file:
     magnet_link=magnet_file.read()
     request_pars = {"customer_id": config["premiumize"]["customer_id"], "pin": config["premiumize"]["pin"], "type": "torrent", "src": magnet_link}
     request = requests.post("https://www.premiumize.me/api/transfer/create", data=request_pars)
-    print(request.text)
+    response=request.json()
+    id_cache[response["id"]] =  response["name"]
+    print(response["status"] + ": " + response["name"])
 
+print('')
+print('Processing .nzb files')
 for filename in glob.glob(os.path.join(config["directories"]["nzbs"], config["file_types"]["nzbs"])):
-  print(filename)
+  print("NZB files not yet integrated: " + filename)
 # NZB processing may be different at Premiumize's end
 #  nzb = {"src": open(filename, "rb")}
 #  request_pars = {"customer_id": config["premiumize"]["customer_id"], "pin": config["premiumize"]["pin"], "type": "nzb"}
 #  request = requests.post("https://www.premiumize.me/api/transfer/create", data=request_pars, files=torrent)
 #  print(request.text)
+
+
+with open(config["directories"]["in_progress_hash_cache"] + 'premiumize_id_cache', 'w') as id_cache_file:
+  json.dump(id_cache, id_cache_file, sort_keys = True, indent = 4)
 
