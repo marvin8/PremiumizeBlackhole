@@ -101,9 +101,12 @@ if len(id_cache) > 0:
     response = requests.post("https://www.premiumize.me/api/torrent/browse", data=request_pars)
     print("")
     print("Download info for: " + name)
-    print("Size: " + humanize.naturalsize(response.json()["size"]))
-    print(response.json()["zip"])
-#  print(json.dumps(response.json(), sort_keys = True, indent = 4))
+#    print(json.dumps(response.json(), sort_keys = True, indent = 4))
+    if response.json()["status"] == "error":
+      print("Download still IN PROGRESS")
+    else:
+      print("Size: " + humanize.naturalsize(response.json()["size"]))
+      print(response.json()["zip"])
 
 
 # Write Premiumize ID cache to file for persistence
