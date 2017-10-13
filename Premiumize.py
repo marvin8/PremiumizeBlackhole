@@ -56,7 +56,11 @@ for filename in glob.glob(os.path.join(config["directories"]["torrents"], config
   request = requests.post("https://www.premiumize.me/api/transfer/create", data=request_pars, files=torrent)
   response=request.json()
   id_cache[response["id"]] =  response["name"]
-  print(response["status"] + ": " + response["name"])
+  if response["status"] == "success":
+    os.remove(filename)
+    print(response["status"] + ": " + response["name"] + " - .torrent file removed!")
+  else:
+    print(response["status"] + ": " + response["name"])
 
 
 print('')
@@ -68,7 +72,11 @@ for filename in glob.glob(os.path.join(config["directories"]["magnets"], config[
     request = requests.post("https://www.premiumize.me/api/transfer/create", data=request_pars)
     response=request.json()
     id_cache[response["id"]] =  response["name"]
-    print(response["status"] + ": " + response["name"])
+    if response["status"] == "success":
+      os.remove(filename)
+      print(response["status"] + ": " + response["name"] + " - .magent file removed!")
+    else:
+      print(response["status"] + ": " + response["name"])
 
 
 print('')
