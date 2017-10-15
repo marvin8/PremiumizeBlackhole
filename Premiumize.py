@@ -82,12 +82,16 @@ for filename in glob.glob(os.path.join(config["directories"]["magnets"], config[
 print('')
 print('Processing .nzb files')
 for filename in glob.glob(os.path.join(config["directories"]["nzbs"], config["file_types"]["nzbs"])):
-  print("NZB files not yet integrated: " + filename)
-# NZB processing may be different at Premiumize's end
-#  nzb = {"src": open(filename, "rb")}
-#  request_pars = {"customer_id": config["premiumize"]["customer_id"], "pin": config["premiumize"]["pin"], "type": "nzb"}
-#  request = requests.post("https://www.premiumize.me/api/transfer/create", data=request_pars, files=torrent)
-#  print(request.text)
+  nzb = {"src": open(filename, "rb")}
+  request_pars = {"customer_id": config["premiumize"]["customer_id"], "pin": config["premiumize"]["pin"], "type": "nzb"}
+  request = requests.post("https://www.premiumize.me/api/transfer/create", data=request_pars, files=nzb)
+  response=request.json()
+  id_cache[response["id"]] =  response["name"]
+  if response["status"] == "success":
+    os.remove(filename)
+    print(response["status"] + ": " + response["name"] + " - .nzb file removed!")
+  else:
+    print(response["status"] + ": " + response["name"])
 
 
 # Check hashes
