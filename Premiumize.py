@@ -99,6 +99,7 @@ if command == "upload":
 
 
 elif command == "check":
+
   for cache_id, name in id_cache.iteritems():
     request_pars = {"customer_id": config["premiumize"]["customer_id"], "pin": config["premiumize"]["pin"], "hash": cache_id}
     response = requests.post("https://www.premiumize.me/api/torrent/browse", data=request_pars)
@@ -124,4 +125,3 @@ elif command == "download":
 # Write Premiumize ID cache to file for persistence
 with open(config["directories"]["in_progress_hash_cache"] + 'premiumize_id_cache', 'w') as id_cache_file:
   json.dump(id_cache, id_cache_file, sort_keys = True, indent = 4)
-
