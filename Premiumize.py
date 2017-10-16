@@ -5,7 +5,18 @@ import humanize
 import json
 import requests
 import os
+import sys
 import urllib
+
+# Check for command line options
+command = ""
+if len(sys.argv) != 2:
+  print "Please specifiy what you'd like " + sys.argv[0] + " to do"
+  print "Valid options are, 'upload', 'check', and 'download'"
+  exit()
+else:
+  command = sys.argv[1]
+  
 
 default_config = {}
 default_config["directories"] = {}
@@ -41,8 +52,6 @@ except IOError:
 try: 
   with open(config["directories"]["in_progress_hash_cache"] + 'premiumize_id_cache', 'r') as id_cache_file:
     id_cache=json.load(id_cache_file)
-    print("ID Cache loaded:")
-    print(json.dumps(id_cache, sort_keys = True, indent = 4))
 
 except:
   id_cache={}
@@ -68,46 +77,33 @@ def Add2DownloadManager(fileName, fileType):
     _addMsg = " - " + fileType + " file removed"
 
   print("Premiumize - add to download manager: " + _responseArr["status"] + _addMsg +" - " + _responseArr["name"])
+
   
-
-print('')
-print('Processing .torrent files')
-for filename in glob.glob(os.path.join(config["directories"]["torrents"], config["file_types"]["torrents"])):
-  Add2DownloadManager(filename, "torrent")
-
-
-print('')
-print('Processing .magnet files')
-for filename in glob.glob(os.path.join(config["directories"]["magnets"], config["file_types"]["magnets"])):
-  Add2DownloadManager(filename, "magnet")
+if command == "upload":
+  print('')
+  print('Processing .torrent files')
+  for filename in glob.glob(os.path.join(config["directories"]["torrents"], config["file_types"]["torrents"])):
+    Add2DownloadManager(filename, "torrent")
 
 
-print('')
-print('Processing .nzb files')
-for filename in glob.glob(os.path.join(config["directories"]["nzbs"], config["file_types"]["nzbs"])):
-  Add2DownloadManager(filename, "nzb")
+  print('')
+  print('Processing .magnet files')
+  for filename in glob.glob(os.path.join(config["directories"]["magnets"], config["file_types"]["magnets"])):
+    Add2DownloadManager(filename, "magnet")
 
 
-# Check hashes
-if len(id_cache) > 0:
-  print("")
-  print("Check download status")
-  hashes_string = ""
-  for cache_id, name in id_cache.iteritems():
-    hashes_string = hashes_string + "&hashes[]=" + cache_id
+  print('')
+  print('Processing .nzb files')
+  for filename in glob.glob(os.path.join(config["directories"]["nzbs"], config["file_types"]["nzbs"])):
+    Add2DownloadManager(filename, "nzb")
 
-  response = requests.get("https://www.premiumize.me/api/torrent/checkhashes?customer_id=" + config["premiumize"]["customer_id"] + "&pin=" + config["premiumize"]["pin"] + hashes_string)
-  for hash_id, array in response.json()["hashes"].iteritems():
-    print(id_cache[hash_id] + ": " + array["status"])
 
- 
-# Check status of each download in Premiumize ID cache
+elif command == "check":
   for cache_id, name in id_cache.iteritems():
     request_pars = {"customer_id": config["premiumize"]["customer_id"], "pin": config["premiumize"]["pin"], "hash": cache_id}
     response = requests.post("https://www.premiumize.me/api/torrent/browse", data=request_pars)
     print("")
     print("Download info for: " + name)
-#    print(json.dumps(response.json(), sort_keys = True, indent = 4))
     if response.json()["status"] == "error":
       print("Download still IN PROGRESS")
     else:
@@ -115,7 +111,11 @@ if len(id_cache) > 0:
       print(response.json()["zip"])
 
 
+elif command == "download":
+  print "Code for download still to be added"
+
+
 # Write Premiumize ID cache to file for persistence
-  with open(config["directories"]["in_progress_hash_cache"] + 'premiumize_id_cache', 'w') as id_cache_file:
-    json.dump(id_cache, id_cache_file, sort_keys = True, indent = 4)
+with open(config["directories"]["in_progress_hash_cache"] + 'premiumize_id_cache', 'w') as id_cache_file:
+  json.dump(id_cache, id_cache_file, sort_keys = True, indent = 4)
 
