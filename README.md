@@ -11,3 +11,11 @@ Premiumize will then also store a file of files added to the Premiumize download
 
 Got to [www.premiumize.me](https://www.premiumize.me/ref/682309937) for information about the Premiumize service.  
 (The link above is a referral link that will give me 15 days of free service with Premiumize for anyone that signs up for a paid account with Premiumize after following my link. The person paying for a Premiumize account will receive a 15 day bonus on top of any paid for period)
+
+# Usage
+
+Add .magnet, .torrent and/or .nzb files to Premiumize download manager by running: `.\Premiumize upload`
+
+Check status of files at Premiumize download manager by running: `.\Premiumize check`
+
+Download files finished downloading at Premiumize by running: `.\Premiumize download`
