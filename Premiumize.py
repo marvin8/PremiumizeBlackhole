@@ -133,7 +133,7 @@ elif command == "download":
       urllib.urlretrieve (response.json()["zip"], config["directories"]["complete_downloads"] + name + ".zip")
       with zipfile.ZipFile(config["directories"]["complete_downloads"] + name + ".zip", "r") as zipref:
         zipref.extractall(config["directories"]["complete_downloads"] + name)
-      os.remove(config["directories"]["complete_downloads"] + name + ".zip", "r")
+      os.remove(config["directories"]["complete_downloads"] + name + ".zip")
       del id_cache[cache_id]
       
 
