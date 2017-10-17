@@ -18,6 +18,16 @@ else:
   command = sys.argv[1]
   
 
+# Check for command line options
+command = ""
+if len(sys.argv) != 2:
+  print "Please specifiy what you'd like " + sys.argv[0] + " to do"
+  print "Valid options are, 'upload', 'check', and 'download'"
+  exit()
+else:
+  command = sys.argv[1]
+  
+
 default_config = {}
 default_config["directories"] = {}
 default_config["directories"]["torrents"] = "."
