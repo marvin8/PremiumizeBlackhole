@@ -1,12 +1,12 @@
 #!/usr/bin/python
 
 import glob
-import humanize
 import json
 import requests
 import os
 import sys
 import urllib
+import zipfile
 
 # Check for command line options
 command = ""
@@ -108,7 +108,7 @@ elif command == "check":
     if response.json()["status"] == "error":
       print("Download still IN PROGRESS")
     else:
-      print("Size: " + humanize.naturalsize(response.json()["size"]))
+      print("Size: " + format(response.json()["size"], ","))
       print(response.json()["zip"])
 
 
@@ -119,7 +119,12 @@ elif command == "download":
     if response.json()["status"] == "error":
       print(name + "Download still IN PROGRESS")
     else:
+      print("Donwloading: " + name)
       urllib.urlretrieve (response.json()["zip"], config["directories"]["complete_downloads"] + name + ".zip")
+      with zipfile.ZipFile(config["directories"]["complete_downloads"] + name + ".zip", "r") as zipref:
+        zipref.extractall(config["directories"]["complete_downloads"] + name)
+      os.remove(config["directories"]["complete_downloads"] + name + ".zip", "r")
+      del id_cache[cache_id]
       
 
 # Write Premiumize ID cache to file for persistence
