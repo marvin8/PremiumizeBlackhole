@@ -123,7 +123,7 @@ elif command == "check":
 
 
 elif command == "download":
-  for cache_id, name in id_cache.iteritems():
+  for cache_id, name in id_cache.items():
     request_pars = {"customer_id": config["premiumize"]["customer_id"], "pin": config["premiumize"]["pin"], "hash": cache_id}
     response = requests.post("https://www.premiumize.me/api/torrent/browse", data=request_pars)
     if response.json()["status"] == "error":
