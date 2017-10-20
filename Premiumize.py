@@ -89,12 +89,12 @@ class Premiumize:
       if response.json()["status"] == "error":
         print(name + " - Download still IN PROGRESS")
       else:
-        print("Donwloading: " + name)
+        print("Downloading: " + name)
         urllib.urlretrieve (response.json()["zip"], path + name + ".zip")
         with zipfile.ZipFile(path + name + ".zip", "r") as zipref:
           zipref.extractall(path + name)
         os.remove(path + name + ".zip")
-        del id_cache[cache_id]
+        del self.id_cache[cache_id]
 
     
 
