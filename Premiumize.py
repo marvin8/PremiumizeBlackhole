@@ -18,16 +18,6 @@ else:
   command = sys.argv[1]
   
 
-# Check for command line options
-command = ""
-if len(sys.argv) != 2:
-  print "Please specifiy what you'd like " + sys.argv[0] + " to do"
-  print "Valid options are, 'upload', 'check', and 'download'"
-  exit()
-else:
-  command = sys.argv[1]
-  
-
 default_config = {}
 default_config["directories"] = {}
 default_config["directories"]["torrents"] = "."
@@ -123,11 +113,13 @@ elif command == "check":
 
 
 elif command == "download":
+  request_pars = {"customer_id": config["premiumize"]["customer_id"], "pin": config["premiumize"]["pin"]}
+  response = requests.post("https://www.premiumize.me/api/transfer/clearfinished", data=request_pars)
   for cache_id, name in id_cache.items():
     request_pars = {"customer_id": config["premiumize"]["customer_id"], "pin": config["premiumize"]["pin"], "hash": cache_id}
     response = requests.post("https://www.premiumize.me/api/torrent/browse", data=request_pars)
     if response.json()["status"] == "error":
-      print(name + "Download still IN PROGRESS")
+      print(name + " - Download still IN PROGRESS")
     else:
       print("Donwloading: " + name)
       urllib.urlretrieve (response.json()["zip"], config["directories"]["complete_downloads"] + name + ".zip")
