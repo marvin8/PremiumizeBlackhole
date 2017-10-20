@@ -24,6 +24,7 @@ class Premiumize:
   def __init__(self, customer_id, pin):
     self.customer_id = customer_id
     self.pin = pin
+    self.defaultRequestPars = {"customer_id": self.customer_id, "pin": self.pin}
 
 
   def loadIdCache(self, id_cache_file_name):
@@ -44,10 +45,13 @@ class Premiumize:
     if fileType == "magnet":
       with open(fileName, 'r') as _magnet_file:
         _magnet_link = _magnet_file.read()
-      _request_pars = {"customer_id": self.customer_id, "pin": self.pin, "type": "torrent", "src": _magnet_link}
+      _request_pars = self.defaultRequestPars
+      _request_pars["type"] = "torrent"
+      _request_pars["src"] = _magnet_link
       _response = requests.post("https://www.premiumize.me/api/transfer/create", data=_request_pars)
     else:
-      _request_pars = {"customer_id": self.customer_id, "pin": self.pin, "type": fileType}
+      _request_pars = self.defaultRequestPars
+      _request_pars["type"] = fileType
       _filePar = {"src": open(fileName, "rb")}
       _response = requests.post("https://www.premiumize.me/api/transfer/create", data=_request_pars, files=_filePar)
 
@@ -63,7 +67,8 @@ class Premiumize:
 
   def checkProgress(self):
     for cache_id, name in self.id_cache.iteritems():
-      request_pars = {"customer_id": self.customer_id, "pin": self.pin, "hash": cache_id}
+      request_pars = self.defaultRequestPars
+      request_pars["hash"] = cache_id
       response = requests.post("https://www.premiumize.me/api/torrent/browse", data=request_pars)
       print("")
       print("Download info for: " + name)
@@ -75,10 +80,11 @@ class Premiumize:
 
 
   def downloadCompleted(self, path):
-    request_pars = {"customer_id": self.customer_id, "pin": self.pin}
+    request_pars = self.defaultRequestPars
     response = requests.post("https://www.premiumize.me/api/transfer/clearfinished", data=request_pars)
     for cache_id, name in self.id_cache.items():
-      request_pars = {"customer_id": self.customer_id, "pin": self.pin, "hash": cache_id}
+      request_pars = self.defaultRequestPars
+      request_pars["hash"] = cache_id
       response = requests.post("https://www.premiumize.me/api/torrent/browse", data=request_pars)
       if response.json()["status"] == "error":
         print(name + " - Download still IN PROGRESS")
